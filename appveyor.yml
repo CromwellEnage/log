@@ -41,6 +41,7 @@ install:
   - cd boost-root
   - git submodule update --init tools/build
   - git submodule update --init libs/config
+  - git submodule update --init libs/scope_exit
   - git submodule update --init tools/boostdep
   - xcopy /s /e /q %APPVEYOR_BUILD_FOLDER% libs\log
   - python tools/boostdep/depinst/depinst.py log
