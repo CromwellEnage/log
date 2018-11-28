@@ -17,13 +17,7 @@
 
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared_object.hpp>
-#include <boost/parameter/parameters.hpp> // for is_named_argument
-#include <boost/preprocessor/comparison/greater.hpp>
-#include <boost/preprocessor/punctuation/comma_if.hpp>
-#include <boost/preprocessor/repetition/enum_params.hpp>
-#include <boost/preprocessor/repetition/enum_binary_params.hpp>
-#include <boost/preprocessor/repetition/enum_shifted_params.hpp>
-#include <boost/preprocessor/repetition/repeat_from_to.hpp>
+#include <boost/parameter/preprocessor.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/sink_init_helpers.hpp>
 #include <boost/log/detail/parameter_tools.hpp>
@@ -67,15 +61,35 @@ inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const& ar
     return sinks::file::make_collector(args);
 }
 
-//! The function constructs the sink and adds it to the core
-template< typename ArgsT >
-shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > > add_file_log(ArgsT const& args)
+} // namespace aux
+
+#ifndef BOOST_LOG_DOXYGEN_PASS
+
+BOOST_PARAMETER_BASIC_FUNCTION(
+    (shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > >),
+    add_file_log,
+    keywords,
+    (
+        (required (file_name, *))
+        (optional (open_mode, *))
+        (optional (rotation_size, *))
+        (optional (time_based_rotation, *))
+        (optional (auto_flush, *))
+        (optional (target, *))
+        (optional (max_size, *))
+        (optional (min_free_space, *))
+        (optional (max_files, *))
+        (optional (scan_method, *))
+        (optional (filter, *))
+        (optional (format, *))
+    )
+)
 {
     typedef sinks::text_file_backend backend_t;
     shared_ptr< backend_t > pBackend = boost::make_shared< backend_t >(args);
 
     shared_ptr< sinks::file::collector > pCollector = aux::setup_file_collector(args,
-        typename is_void< typename parameter::binding< ArgsT, keywords::tag::target, void >::type >::type());
+        typename is_void< typename parameter::binding< Args, keywords::tag::target, void >::type >::type());
     if (pCollector)
     {
         pBackend->set_file_collector(pCollector);
@@ -86,47 +100,15 @@ shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > > 
         boost::make_shared< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< backend_t > >(pBackend);
 
     aux::setup_filter(*pSink, args,
-        typename is_void< typename parameter::binding< ArgsT, keywords::tag::filter, void >::type >::type());
+        typename is_void< typename parameter::binding< Args, keywords::tag::filter, void >::type >::type());
 
     aux::setup_formatter(*pSink, args,
-        typename is_void< typename parameter::binding< ArgsT, keywords::tag::format, void >::type >::type());
+        typename is_void< typename parameter::binding< Args, keywords::tag::format, void >::type >::type());
 
     core::get()->add_sink(pSink);
 
     return pSink;
 }
-
-//! The function wraps the argument into a file_name named argument, if needed
-template< typename T >
-inline T const& wrap_file_name(T const& arg, mpl::true_)
-{
-    return arg;
-}
-template< typename T >
-inline typename parameter::aux::tag< keywords::tag::file_name, T const& >::type
-wrap_file_name(T const& arg, mpl::false_)
-{
-    return keywords::file_name = arg;
-}
-
-} // namespace aux
-
-#ifndef BOOST_LOG_DOXYGEN_PASS
-
-#define BOOST_LOG_INIT_LOG_TO_FILE_INTERNAL(z, n, data)\
-    template< BOOST_PP_ENUM_PARAMS(n, typename T) >\
-    inline shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > > add_file_log(BOOST_PP_ENUM_BINARY_PARAMS(n, T, const& arg))\
-    {\
-        return aux::add_file_log((\
-            aux::wrap_file_name(arg0, typename parameter::aux::is_named_argument< T0 >::type())\
-            BOOST_PP_COMMA_IF(BOOST_PP_GREATER(n, 1))\
-            BOOST_PP_ENUM_SHIFTED_PARAMS(n, arg)\
-            ));\
-    }
-
-BOOST_PP_REPEAT_FROM_TO(1, BOOST_LOG_MAX_PARAMETER_ARGS, BOOST_LOG_INIT_LOG_TO_FILE_INTERNAL, ~)
-
-#undef BOOST_LOG_INIT_LOG_TO_FILE_INTERNAL
 
 #else // BOOST_LOG_DOXYGEN_PASS
 
