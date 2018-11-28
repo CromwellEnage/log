@@ -80,20 +80,18 @@ BOOST_PARAMETER_BASIC_FUNCTION(
     (shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > >),
     add_file_log,
     keywords,
-    (
-        (required (file_name, *))
-        (optional (open_mode, *))
-        (optional (rotation_size, *))
-        (optional (time_based_rotation, *))
-        (optional (auto_flush, *))
-        (optional (target, *))
-        (optional (max_size, *))
-        (optional (min_free_space, *))
-        (optional (max_files, *))
-        (optional (scan_method, *))
-        (optional (filter, *))
-        (optional (format, *))
-    )
+    (required (file_name, *))
+    (optional (open_mode, *))
+    (optional (rotation_size, *))
+    (optional (time_based_rotation, *))
+    (optional (auto_flush, *))
+    (optional (target, *))
+    (optional (max_size, *))
+    (optional (min_free_space, *))
+    (optional (max_files, *))
+    (optional (scan_method, *))
+    (optional (filter, *))
+    (optional (format, *))
 )
 {
     typedef sinks::text_file_backend backend_t;
