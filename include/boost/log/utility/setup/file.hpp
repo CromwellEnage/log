@@ -28,7 +28,18 @@
 #include <boost/log/sinks/unlocked_frontend.hpp>
 #endif
 #include <boost/log/sinks/text_file_backend.hpp>
+#include <boost/log/keywords/file_name.hpp>
+#include <boost/log/keywords/open_mode.hpp>
+#include <boost/log/keywords/rotation_size.hpp>
+#include <boost/log/keywords/time_based_rotation.hpp>
+#include <boost/log/keywords/auto_flush.hpp>
+#include <boost/log/keywords/target.hpp>
+#include <boost/log/keywords/max_size.hpp>
+#include <boost/log/keywords/min_free_space.hpp>
+#include <boost/log/keywords/max_files.hpp>
 #include <boost/log/keywords/scan_method.hpp>
+#include <boost/log/keywords/filter.hpp>
+#include <boost/log/keywords/format.hpp>
 #include <boost/log/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
