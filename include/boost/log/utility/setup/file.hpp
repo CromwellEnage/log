@@ -15,6 +15,12 @@
 #ifndef BOOST_LOG_UTILITY_SETUP_FILE_HPP_INCLUDED_
 #define BOOST_LOG_UTILITY_SETUP_FILE_HPP_INCLUDED_
 
+#include <boost/parameter/config.hpp>
+
+#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && (BOOST_PARAMETER_MAX_ARITY < 12)
+#error Define BOOST_PARAMETER_MAX_ARITY as 12 or higher.
+#endif
+
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared_object.hpp>
 #include <boost/parameter/preprocessor.hpp>
@@ -79,7 +85,7 @@ inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const& ar
 BOOST_PARAMETER_BASIC_FUNCTION(
     (shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > >),
     add_file_log,
-    keywords,
+    keywords::tag,
     (required (file_name, *))
     (optional (open_mode, *))
     (optional (rotation_size, *))
