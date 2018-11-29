@@ -17,12 +17,14 @@
 
 #include <boost/parameter/config.hpp>
 
-#if !defined(BOOST_PARAMETER_HAS_PERFECT_FORWARDING) && (BOOST_PARAMETER_MAX_ARITY < 12)
+#if BOOST_PARAMETER_MAX_ARITY < 12
 #error Define BOOST_PARAMETER_MAX_ARITY as 12 or higher.
 #endif
 
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared_object.hpp>
+#include <boost/mpl/bool.hpp>
+#include <boost/mpl/has_key.hpp>
 #include <boost/parameter/preprocessor.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/sink_init_helpers.hpp>
@@ -68,14 +70,14 @@ namespace aux {
 
 //! The function creates a file collector according to the specified arguments
 template< typename ArgsT >
-inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const&, mpl::true_ const&)
-{
-    return shared_ptr< sinks::file::collector >();
-}
-template< typename ArgsT >
-inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const& args, mpl::false_ const&)
+inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const& args, mpl::true_ const&)
 {
     return sinks::file::make_collector(args);
+}
+template< typename ArgsT >
+inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const&, mpl::false_ const&)
+{
+    return shared_ptr< sinks::file::collector >();
 }
 
 } // namespace aux
@@ -104,7 +106,7 @@ BOOST_PARAMETER_BASIC_FUNCTION(
     shared_ptr< backend_t > pBackend = boost::make_shared< backend_t >(args);
 
     shared_ptr< sinks::file::collector > pCollector = aux::setup_file_collector(args,
-        typename is_void< typename parameter::binding< Args, keywords::tag::target, void >::type >::type());
+        typename mpl::has_key< Args, keywords::tag::target >::type());
     if (pCollector)
     {
         pBackend->set_file_collector(pCollector);
@@ -115,10 +117,10 @@ BOOST_PARAMETER_BASIC_FUNCTION(
         boost::make_shared< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< backend_t > >(pBackend);
 
     aux::setup_filter(*pSink, args,
-        typename is_void< typename parameter::binding< Args, keywords::tag::filter, void >::type >::type());
+        typename mpl::has_key< Args, keywords::tag::filter >::type());
 
     aux::setup_formatter(*pSink, args,
-        typename is_void< typename parameter::binding< Args, keywords::tag::format, void >::type >::type());
+        typename mpl::has_key< Args, keywords::tag::format >::type());
 
     core::get()->add_sink(pSink);
 
