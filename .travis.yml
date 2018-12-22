@@ -24,7 +24,54 @@ matrix:
 
   include:
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-5 CXXSTD=11,14
+      compiler: g++-4.4
+      env: TOOLSET=gcc COMPILER=g++-4.4 CXXSTD=98,0x
+      addons:
+        apt:
+          packages:
+            - g++-4.4
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      compiler: g++-4.6
+      env: TOOLSET=gcc COMPILER=g++-4.6 CXXSTD=03,0x
+      addons:
+        apt:
+          packages:
+            - g++-4.6
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-4.7 CXXSTD=03,11
+      addons:
+        apt:
+          packages:
+            - g++-4.7
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-4.8 CXXSTD=03,11
+      addons:
+        apt:
+          packages:
+            - g++-4.8
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-4.9 CXXSTD=03,11
+      addons:
+        apt:
+          packages:
+            - g++-4.9
+          sources:
+            - ubuntu-toolchain-r-test
+
+    - os: linux
+      env: TOOLSET=gcc COMPILER=g++-5 CXXSTD=03,11,14
       addons:
         apt:
           packages:
@@ -33,7 +80,7 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=11
+      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=03,11
       addons:
         apt:
           packages:
@@ -51,7 +98,7 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=11 CXXSTD_DIALECT=cxxstd-dialect=gnu
+      env: TOOLSET=gcc COMPILER=g++-6 CXXSTD=03,11 CXXSTD_DIALECT=cxxstd-dialect=gnu
       addons:
         apt:
           packages:
@@ -71,7 +118,7 @@ matrix:
     - os: linux
       dist: trusty
       compiler: g++-7
-      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=11
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=03,11
       addons:
         apt:
           packages:
@@ -93,7 +140,7 @@ matrix:
     - os: linux
       dist: trusty
       compiler: g++-7
-      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=11 CXXSTD_DIALECT=cxxstd-dialect=gnu
+      env: TOOLSET=gcc COMPILER=g++-7 CXXSTD=03,11 CXXSTD_DIALECT=cxxstd-dialect=gnu
       addons:
         apt:
           packages:
@@ -114,7 +161,7 @@ matrix:
 
     - os: linux
       compiler: g++-8
-      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=11
+      env: TOOLSET=gcc COMPILER=g++-8 CXXSTD=03,11
       addons:
         apt:
           packages:
@@ -133,7 +180,7 @@ matrix:
             - ubuntu-toolchain-r-test
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.5 CXXSTD=11
+      env: TOOLSET=clang COMPILER=clang++-3.5 CXXSTD=03,11
       addons:
         apt:
           packages:
@@ -143,7 +190,7 @@ matrix:
             - llvm-toolchain-precise-3.5
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.6 CXXSTD=11
+      env: TOOLSET=clang COMPILER=clang++-3.6 CXXSTD=03,11
       addons:
         apt:
           packages:
@@ -153,7 +200,7 @@ matrix:
             - llvm-toolchain-precise-3.6
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.7 CXXSTD=11
+      env: TOOLSET=clang COMPILER=clang++-3.7 CXXSTD=03,11
       addons:
         apt:
           packages:
@@ -163,7 +210,7 @@ matrix:
             - llvm-toolchain-precise-3.7
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.8 CXXSTD=11
+      env: TOOLSET=clang COMPILER=clang++-3.8 CXXSTD=03,11
       addons:
         apt:
           packages:
@@ -173,7 +220,7 @@ matrix:
             - llvm-toolchain-precise-3.8
 
     - os: linux
-      env: TOOLSET=clang COMPILER=clang++-3.9 CXXSTD=11
+      env: TOOLSET=clang COMPILER=clang++-3.9 CXXSTD=03,11
       addons:
         apt:
           packages:
@@ -184,7 +231,7 @@ matrix:
 
     - os: linux
       compiler: clang++-4.0
-      env: TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=11,14,1z
+      env: TOOLSET=clang COMPILER=clang++-4.0 CXXSTD=03,11,14,1z
       addons:
         apt:
           packages:
@@ -195,7 +242,7 @@ matrix:
 
     - os: linux
       compiler: clang++-5.0
-      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=11,14,1z
+      env: TOOLSET=clang COMPILER=clang++-5.0 CXXSTD=03,11,14,1z
       addons:
         apt:
           packages:
@@ -206,7 +253,7 @@ matrix:
 
     - os: linux
       compiler: clang++
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11,14,1z
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
       addons:
         apt:
           packages:
@@ -216,15 +263,19 @@ matrix:
 
     - os: linux
       compiler: clang++-libc++
-      env: TOOLSET=clang COMPILER=clang++-libc++ CXXSTD=11,14,1z
+      env: TOOLSET=clang COMPILER=clang++-libc++ CXXSTD=03,11,14,1z
       addons:
         apt:
           packages:
             - libc++-dev
 
     - os: osx
-      env: TOOLSET=clang COMPILER=clang++ CXXSTD=11,14,1z
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03,11,14,1z
       osx_image: xcode7.3
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
+      osx_image: xcode8.3
 
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
@@ -237,6 +288,10 @@ matrix:
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=1z
       osx_image: xcode8.3
+
+    - os: osx
+      env: TOOLSET=clang COMPILER=clang++ CXXSTD=03
+      osx_image: xcode9.4.1
 
     - os: osx
       env: TOOLSET=clang COMPILER=clang++ CXXSTD=11
@@ -255,6 +310,8 @@ install:
   - cd ..
   - git clone -b $TRAVIS_BRANCH --depth 1 https://github.com/boostorg/boost.git boost-root
   - cd boost-root
+  - git submodule update --init tools/boost_install
+  - git submodule update --init libs/headers
   - git submodule update --init tools/build
   - git submodule update --init libs/config
   - git submodule update --init libs/scope_exit
