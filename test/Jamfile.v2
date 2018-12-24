@@ -12,7 +12,6 @@ import regex ;
 
 project
     : requirements
-        <define>BOOST_PARAMETER_MAX_ARITY=12
         <include>common
 
         # Disable warnings about using 'insecure' standard C functions

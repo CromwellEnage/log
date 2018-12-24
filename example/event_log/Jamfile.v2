@@ -43,7 +43,6 @@ rule check-message-compiler ( properties * )
 
 project
     : requirements
-        <define>BOOST_PARAMETER_MAX_ARITY=12
         <conditional>@check-message-compiler
 
         <link>shared
