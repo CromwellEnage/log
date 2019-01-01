@@ -18,6 +18,7 @@
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared_object.hpp>
 #include <boost/parameter/parameters.hpp> // for is_named_argument
+#include <boost/mpl/has_key.hpp>
 #include <boost/preprocessor/comparison/greater.hpp>
 #include <boost/preprocessor/punctuation/comma_if.hpp>
 #include <boost/preprocessor/repetition/enum_params.hpp>
