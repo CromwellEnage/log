@@ -15,17 +15,15 @@
 #ifndef BOOST_LOG_UTILITY_SETUP_FILE_HPP_INCLUDED_
 #define BOOST_LOG_UTILITY_SETUP_FILE_HPP_INCLUDED_
 
-#include <boost/parameter/config.hpp>
-
-#if BOOST_PARAMETER_MAX_ARITY < 12
-#error Define BOOST_PARAMETER_MAX_ARITY as 12 or higher.
-#endif
-
 #include <boost/smart_ptr/shared_ptr.hpp>
 #include <boost/smart_ptr/make_shared_object.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/has_key.hpp>
-#include <boost/parameter/preprocessor.hpp>
+#include <boost/parameter/parameters.hpp> // for is_named_argument
+#include <boost/preprocessor/comparison/greater.hpp>
+#include <boost/preprocessor/punctuation/comma_if.hpp>
+#include <boost/preprocessor/repetition/enum_params.hpp>
+#include <boost/preprocessor/repetition/enum_binary_params.hpp>
+#include <boost/preprocessor/repetition/enum_shifted_params.hpp>
+#include <boost/preprocessor/repetition/repeat_from_to.hpp>
 #include <boost/log/detail/config.hpp>
 #include <boost/log/detail/sink_init_helpers.hpp>
 #include <boost/log/detail/parameter_tools.hpp>
@@ -36,18 +34,7 @@
 #include <boost/log/sinks/unlocked_frontend.hpp>
 #endif
 #include <boost/log/sinks/text_file_backend.hpp>
-#include <boost/log/keywords/file_name.hpp>
-#include <boost/log/keywords/open_mode.hpp>
-#include <boost/log/keywords/rotation_size.hpp>
-#include <boost/log/keywords/time_based_rotation.hpp>
-#include <boost/log/keywords/auto_flush.hpp>
-#include <boost/log/keywords/target.hpp>
-#include <boost/log/keywords/max_size.hpp>
-#include <boost/log/keywords/min_free_space.hpp>
-#include <boost/log/keywords/max_files.hpp>
 #include <boost/log/keywords/scan_method.hpp>
-#include <boost/log/keywords/filter.hpp>
-#include <boost/log/keywords/format.hpp>
 #include <boost/log/detail/header.hpp>
 
 #ifdef BOOST_HAS_PRAGMA_ONCE
@@ -80,27 +67,9 @@ inline shared_ptr< sinks::file::collector > setup_file_collector(ArgsT const&, m
     return shared_ptr< sinks::file::collector >();
 }
 
-} // namespace aux
-
-#ifndef BOOST_LOG_DOXYGEN_PASS
-
-BOOST_PARAMETER_BASIC_FUNCTION(
-    (shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > >),
-    add_file_log,
-    keywords::tag,
-    (required (file_name, *))
-    (optional (open_mode, *))
-    (optional (rotation_size, *))
-    (optional (time_based_rotation, *))
-    (optional (auto_flush, *))
-    (optional (target, *))
-    (optional (max_size, *))
-    (optional (min_free_space, *))
-    (optional (max_files, *))
-    (optional (scan_method, *))
-    (optional (filter, *))
-    (optional (format, *))
-)
+//! The function constructs the sink and adds it to the core
+template< typename ArgsT >
+shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > > add_file_log(ArgsT const& args)
 {
     typedef sinks::text_file_backend backend_t;
     shared_ptr< backend_t > pBackend = boost::make_shared< backend_t >(args);
@@ -126,6 +95,38 @@ BOOST_PARAMETER_BASIC_FUNCTION(
 
     return pSink;
 }
+
+//! The function wraps the argument into a file_name named argument, if needed
+template< typename T >
+inline T const& wrap_file_name(T const& arg, mpl::true_)
+{
+    return arg;
+}
+template< typename T >
+inline typename parameter::aux::tag< keywords::tag::file_name, T const >::type
+wrap_file_name(T const& arg, mpl::false_)
+{
+    return keywords::file_name = arg;
+}
+
+} // namespace aux
+
+#ifndef BOOST_LOG_DOXYGEN_PASS
+
+#define BOOST_LOG_INIT_LOG_TO_FILE_INTERNAL(z, n, data)\
+    template< BOOST_PP_ENUM_PARAMS(n, typename T) >\
+    inline shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > > add_file_log(BOOST_PP_ENUM_BINARY_PARAMS(n, T, const& arg))\
+    {\
+        return aux::add_file_log((\
+            aux::wrap_file_name(arg0, typename parameter::aux::is_named_argument< T0 >::type())\
+            BOOST_PP_COMMA_IF(BOOST_PP_GREATER(n, 1))\
+            BOOST_PP_ENUM_SHIFTED_PARAMS(n, arg)\
+            ));\
+    }
+
+BOOST_PP_REPEAT_FROM_TO(1, BOOST_LOG_MAX_PARAMETER_ARGS, BOOST_LOG_INIT_LOG_TO_FILE_INTERNAL, ~)
+
+#undef BOOST_LOG_INIT_LOG_TO_FILE_INTERNAL
 
 #else // BOOST_LOG_DOXYGEN_PASS
 
