@@ -75,7 +75,7 @@ shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > > 
     shared_ptr< backend_t > pBackend = boost::make_shared< backend_t >(args);
 
     shared_ptr< sinks::file::collector > pCollector = aux::setup_file_collector(args,
-        typename mpl::has_key< Args, keywords::tag::target >::type());
+        typename mpl::has_key< ArgsT, keywords::tag::target >::type());
     if (pCollector)
     {
         pBackend->set_file_collector(pCollector);
@@ -86,10 +86,10 @@ shared_ptr< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< sinks::text_file_backend > > 
         boost::make_shared< BOOST_LOG_FILE_SINK_FRONTEND_INTERNAL< backend_t > >(pBackend);
 
     aux::setup_filter(*pSink, args,
-        typename mpl::has_key< Args, keywords::tag::filter >::type());
+        typename mpl::has_key< ArgsT, keywords::tag::filter >::type());
 
     aux::setup_formatter(*pSink, args,
-        typename mpl::has_key< Args, keywords::tag::format >::type());
+        typename mpl::has_key< ArgsT, keywords::tag::format >::type());
 
     core::get()->add_sink(pSink);
 
